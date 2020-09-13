@@ -1,0 +1,37 @@
+{% extends "notes/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section">
+    <form action="{% url 'home' %}" method="POST" >
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Filter by</legend>
+            {{ form|crispy }}
+            <button class="float-sm-right btn btn-outline-info" type="submit" href='{% url "home"  %}'>Go</button>
+        </fieldset>
+        
+    </form>
+    
+</div>
+    {% for note in notes %}
+    <article class="media content-section">
+    <div class="media-body">
+        
+        <div class="article-metadata">              
+        <a class="mr-2" href="#">{{ note.author }}</a>
+        <small class="text-muted">{{ note.date_posted| date:"h:i A, F d, Y" }}</small>
+        </div>
+        
+        <h2><a class="article-title" href="#">{{ note.name }}</a></h2>
+        <h5><a class="article-title" href="#">Subject: {{ note.subjectname }}</a></h5>
+        <h5><a class="article-title" href="#">Branch: {{ note.subjectname.get_branch_display }},  Semester: {{ note.subjectname.sem }}</a></h5>
+        <p class="article-content">{{ note.description }}</p>
+        {% if user.is_authenticated %}
+        <a class="btn btn-success" href="{{ note.filename.url  }}">Download</a>
+        {% else %}
+        <a class="btn btn-success" href="{% url 'login' %}">Login To Download</a>
+        {% endif %}
+    </div>
+    </article>
+    {% endfor %}
+{% endblock content %}
